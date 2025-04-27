@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 
 type Alert = {
-  date: string;
+  date: number;
   type: string;
   severity: "low" | "medium" | "high";
   description: string;
@@ -15,24 +15,34 @@ function Alerts() {
 
   const handleFetch = async () => {
     try {
-      const res = await axios.get<Alert[]>(
-        `http://localhost:5000/api/alerts/${address || "demo"}`
+      const safeAddress = encodeURIComponent(address.trim() || "demo");
+      const response = await axios.get<Alert[]>(
+        `http://localhost:5050/api/alerts/${safeAddress}`
       );
-      setAlerts(res.data);
+      setAlerts(response.data);
       setError("");
     } catch (err) {
-      console.error("Alert fetch error:", err);
+      console.error("API error:", err);
       setError("Failed to fetch alerts.");
       setAlerts([]);
     }
   };
 
+  const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleString();
+  };
+
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case "high": return "bg-red-600/20 text-red-400";
-      case "medium": return "bg-yellow-400/10 text-yellow-300";
-      case "low": return "bg-blue-600/20 text-blue-300";
-      default: return "bg-zinc-700 text-white";
+      case "high":
+        return "bg-red-100 text-red-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "low":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-700";
     }
   };
 
@@ -43,37 +53,32 @@ function Alerts() {
       <div className="flex gap-4 items-center">
         <input
           type="text"
-          placeholder="Enter wallet address"
+          placeholder="Enter Sonic wallet address"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          className="px-4 py-2 w-full max-w-md bg-inputBg text-white placeholder-zinc-500 border border-zinc-700 rounded-xl focus:ring-2 focus:ring-neon"
+          className="w-full px-4 py-2 bg-inputBg text-white placeholder-zinc-500 border border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-neon"
         />
         <button
           onClick={handleFetch}
-          className="bg-accent text-white px-6 py-2 rounded-xl shadow hover:bg-cyan-500 transition"
+          className="bg-indigo-600 text-white px-6 py-2 rounded-xl shadow hover:bg-indigo-700 transition"
         >
           Fetch Alerts
         </button>
       </div>
 
-      {error && <p className="text-red-500 font-medium">{error}</p>}
+      {error && (
+        <p className="text-red-600 font-medium">{error}</p>
+      )}
 
-      <div className="mt-6 space-y-4">
-        {alerts.map((alert, i) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        {alerts.map((alert, idx) => (
           <div
-            key={i}
-            className="bg-card border border-zinc-700 rounded-xl p-5 shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center hover:border-neon transition"
+            key={idx}
+            className={`p-6 rounded-xl shadow-lg ${getSeverityColor(alert.severity)} transition`}
           >
-            <div>
-              <h3 className="text-xl font-semibold text-accent mb-1">{alert.type}</h3>
-              <p className="text-textSecondary text-sm">{alert.description}</p>
-              <p className="text-xs text-zinc-500 mt-1">Date: {alert.date}</p>
-            </div>
-            <span
-              className={`mt-3 sm:mt-0 px-3 py-1 rounded-xl text-xs font-bold ${getSeverityColor(alert.severity)}`}
-            >
-              {alert.severity.toUpperCase()}
-            </span>
+            <h3 className="text-lg font-semibold">{alert.type}</h3>
+            <p className="text-sm">{alert.description}</p>
+            <p className="text-xs text-gray-600 mt-2">Date: {formatDate(alert.date)}</p>
           </div>
         ))}
       </div>

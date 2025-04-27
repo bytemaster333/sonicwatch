@@ -4,8 +4,8 @@ import axios from "axios";
 type WalletSummary = {
   totalTxs: number;
   tokenCount: number;
-  firstSeen: string;
-  lastActivity: string;
+  firstSeen: number;  // Değişti: string değil number olacak
+  lastActivity: number;  // Değişti: string değil number olacak
 };
 
 function WalletAnalysis() {
@@ -16,7 +16,7 @@ function WalletAnalysis() {
   const handleAnalyze = async () => {
     try {
       const response = await axios.get<WalletSummary>(
-        `http://localhost:5000/api/wallet-summary/${address || "demo"}`
+        `http://localhost:5050/api/wallet-summary/${address || "demo"}`
       );
       setWalletData(response.data);
       setError("");
@@ -25,6 +25,12 @@ function WalletAnalysis() {
       setError("Failed to fetch wallet data.");
       setWalletData(null);
     }
+  };
+
+  // Timestamp'ı okunabilir hale çeviren fonksiyon
+  const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleString();
   };
 
   return (
@@ -63,11 +69,11 @@ function WalletAnalysis() {
           </div>
           <div className="bg-card p-6 rounded-xl border border-zinc-700 shadow hover:shadow-neon transition">
             <h3 className="text-gray-500 text-sm">First Seen</h3>
-            <p className="text-xl font-semibold">{walletData.firstSeen}</p>
+            <p className="text-xl font-semibold">{formatDate(walletData.firstSeen)}</p>
           </div>
           <div className="bg-card p-6 rounded-xl border border-zinc-700 shadow hover:shadow-neon transition">
             <h3 className="text-gray-500 text-sm">Last Activity</h3>
-            <p className="text-xl font-semibold">{walletData.lastActivity}</p>
+            <p className="text-xl font-semibold">{formatDate(walletData.lastActivity)}</p>
           </div>
         </div>
       )}

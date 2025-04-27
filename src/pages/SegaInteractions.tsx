@@ -3,10 +3,8 @@ import axios from "axios";
 
 type SegaTx = {
   txHash: string;
-  date: string;
-  type: "swap" | "add-liquidity" | "remove-liquidity";
-  tokenPair: string;
-  amount: string;
+  date: number;  // timestamp
+  action: string; // swap, add-liquidity, remove-liquidity
 };
 
 function SegaInteractions() {
@@ -16,25 +14,22 @@ function SegaInteractions() {
 
   const handleFetch = async () => {
     try {
-      const res = await axios.get<SegaTx[]>(
-        `http://localhost:5000/api/sega/${address || "demo"}`
+      const safeAddress = encodeURIComponent(address.trim() || "demo");
+      const response = await axios.get<SegaTx[]>(
+        `http://localhost:5050/api/sega/${safeAddress}`
       );
-      setSegaTxs(res.data);
+      setSegaTxs(response.data);
       setError("");
     } catch (err) {
-      console.error("SEGA fetch error:", err);
+      console.error("API error:", err);
       setError("Failed to fetch SEGA interactions.");
       setSegaTxs([]);
     }
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "swap": return "bg-indigo-500/20 text-indigo-300";
-      case "add-liquidity": return "bg-green-500/20 text-green-300";
-      case "remove-liquidity": return "bg-red-500/20 text-red-300";
-      default: return "bg-zinc-700 text-white";
-    }
+  const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleString();
   };
 
   return (
@@ -44,56 +39,42 @@ function SegaInteractions() {
       <div className="flex gap-4 items-center">
         <input
           type="text"
-          placeholder="Enter wallet address"
+          placeholder="Enter Sonic wallet address"
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          className="px-4 py-2 w-full max-w-md bg-inputBg text-white placeholder-zinc-500 border border-zinc-700 rounded-xl focus:ring-2 focus:ring-neon"
+          className="w-full px-4 py-2 bg-inputBg text-white placeholder-zinc-500 border border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-neon"
         />
         <button
           onClick={handleFetch}
-          className="bg-accent text-white px-6 py-2 rounded-xl shadow hover:bg-cyan-500 transition"
+          className="bg-indigo-600 text-white px-6 py-2 rounded-xl shadow hover:bg-indigo-700 transition"
         >
-          Fetch SEGA Data
+          Fetch SEGA Activity
         </button>
       </div>
 
-      {error && <p className="text-red-600 font-medium">{error}</p>}
+      {error && (
+        <p className="text-red-600 font-medium">{error}</p>
+      )}
 
       <div className="overflow-x-auto mt-6">
-        <table className="w-full border border-zinc-700 rounded-xl overflow-hidden text-sm text-left">
-          <thead className="bg-zinc-800 text-zinc-300">
-            <tr>
-              <th className="px-4 py-2">Tx Hash</th>
-              <th className="px-4 py-2">Date</th>
-              <th className="px-4 py-2">Type</th>
-              <th className="px-4 py-2">Token Pair</th>
-              <th className="px-4 py-2">Amount</th>
+        <table className="w-full bg-card text-white rounded-xl">
+          <thead>
+            <tr className="text-gray-400 text-left">
+              <th className="p-3">Tx Hash</th>
+              <th className="p-3">Date</th>
+              <th className="p-3">Action</th>
             </tr>
           </thead>
           <tbody>
-            {segaTxs.map((tx, i) => (
-              <tr key={i} className="border-t border-zinc-700 hover:bg-zinc-800 transition">
-                <td className="px-4 py-2 font-mono text-cyan-400">{tx.txHash}</td>
-                <td className="px-4 py-2 text-textPrimary">{tx.date}</td>
-                <td className="px-4 py-2">
-                  <span className={`px-3 py-1 rounded-xl text-xs font-semibold ${getTypeColor(tx.type)}`}>
-                    {tx.type.replace("-", " ")}
-                  </span>
-                </td>
-                <td className="px-4 py-2 text-textPrimary">{tx.tokenPair}</td>
-                <td className="px-4 py-2 text-textPrimary">{tx.amount}</td>
+            {segaTxs.map((tx, idx) => (
+              <tr key={idx} className="border-t border-zinc-700">
+                <td className="p-3 font-mono text-indigo-400">{tx.txHash.slice(0, 8)}...</td>
+                <td className="p-3">{formatDate(tx.date)}</td>
+                <td className="p-3 capitalize">{tx.action}</td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
-
-      {/* Placeholder for Future Chart */}
-      <div className="mt-10 bg-card rounded-xl p-6 border border-zinc-700">
-        <p className="text-textSecondary mb-2">📊 DEX Activity Graph (Coming Soon)</p>
-        <div className="w-full h-40 bg-zinc-900 rounded-lg flex items-center justify-center text-zinc-500">
-          [Chart Placeholder]
-        </div>
       </div>
     </div>
   );
