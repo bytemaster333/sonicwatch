@@ -1,54 +1,101 @@
-# React + TypeScript + Vite
+# SonicWatch
+Real-Time Transparency and Analytics for the Sonic SVM Blockchain.
+Monitor wallet activities, track token transfers, analyze dApp interactions, and detect anomalies — all live from the Sonic mainnet alpha.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## ✨ Features
+Wallet address analysis (total transactions, first/last activity)
 
-Currently, two official plugins are available:
+Incoming and outgoing token transfer tracking
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+SEGA DEX interaction detection (swaps, liquidity actions)
 
-## Expanding the ESLint configuration
+Real-time anomaly detection (large transfers, failed transactions)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Lightweight Flask API backend
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+Modern React.js frontend dashboard
+
+Sonic Mainnet Alpha API live integration
+
+## 🚀 Installation
+Follow these steps to set up SonicWatch locally:
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/yourrepo/sonicwatch.git
+cd sonicwatch
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+### 2. Setup the Backend (Flask API)
+Go into the backend/ folder:
+```bash
+cd backend
 ```
+Create a virtual environment and activate it:
+```bash
+python -m venv venv
+# Linux/Mac
+source venv/bin/activate
+# Windows
+venv\Scripts\activate
+```
+Install required Python packages:
+```bash
+pip install -r requirements.txt
+```
+Run the Flask server:
+```bash
+python app.py
+```
+Server will run by default on:
+http://localhost:5050
+
+### 3. Setup the Frontend (React.js App)
+Go into the frontend/ folder:
+```bash
+cd ../frontend
+```
+Install the dependencies:
+```bash
+npm install
+```
+Run the development server:
+```bash
+npm run dev
+```
+Frontend will run by default on:
+http://localhost:3000
+## 🔐 API Access Requirements
+Good news!
+✅ Sonic Mainnet Alpha APIs used in SonicWatch do not require authentication tokens at this stage.
+
+All API queries are made directly to:
+
+https://api.mainnet-alpha.sonic.game
+
+You can use the tool freely without any Sonic API key setup.
+
+## 🎯 Usage
+Once both backend and frontend are running:
+
+Navigate to http://localhost:3000
+
+Enter any Sonic wallet address into the input fields
+
+Analyze wallet activity, token transfers, dApp interactions, and detected anomalies in real-time
+
+## 🔭 Future Roadmap
+Multi-wallet tracking
+
+Entity profiling (whale, bot, developer detection)
+
+ML-based anomaly detection engine
+
+Data export options (CSV, API access)
+
+dApp interaction mapping
+
+## 🤝 Contribution
+Contributions are welcome!
+Feel free to fork the repository, open issues, or submit pull requests to suggest features or improvements.
+
