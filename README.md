@@ -22,7 +22,7 @@ Follow these steps to set up SonicWatch locally:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourrepo/sonicwatch.git
+git clone https://github.com/bytemaster333/sonicwatch
 cd sonicwatch
 ```
 
